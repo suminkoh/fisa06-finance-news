@@ -17,7 +17,7 @@ from urllib.parse import parse_qs, urlparse
 import urllib.parse
 
 def get_bank_news():
-    url = "https://finance.naver.com/news/news_list.naver?mode=LSS2D&section_id=101&section_id2=259"
+    url = "https://www.reuters.com/business/finance/"
     headers = {"User-Agent": "Mozilla/5.0"}
 
     try:
@@ -25,25 +25,27 @@ def get_bank_news():
         soup = BeautifulSoup(res.text, "html.parser")
 
         news_data = []
-        items = soup.select(".articleSubject a")[:10]
+        items = soup.select("a.story-title, a.media-story-card__heading__link")[:10]
 
         for item in items:
             title = item.get_text(strip=True)
+            link = item.get("href")
 
-            # 🔑 네이버 뉴스 검색 링크 (외부 접근 100% 가능)
-            query = urllib.parse.quote(title)
-            link = f"https://search.naver.com/search.naver?where=news&query={query}"
+            if link and link.startswith("/"):
+                link = "https://www.reuters.com" + link
 
-            news_data.append({
-                "title": title,
-                "link": link
-            })
+            if title and link:
+                news_data.append({
+                    "title": title,
+                    "link": link
+                })
 
         return news_data
 
     except Exception as e:
-        print("뉴스 수집 에러:", e)
+        print("Reuters 뉴스 수집 에러:", e)
         return []
+
 
 
 def get_ai_summary(news_list):
