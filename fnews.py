@@ -12,9 +12,12 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 from urllib.parse import urljoin
 
+from urllib.parse import parse_qs, urlparse
+
 def get_bank_news():
     url = "https://finance.naver.com/news/news_list.naver?mode=LSS2D&section_id=101&section_id2=259"
     headers = {"User-Agent": "Mozilla/5.0"}
+
     try:
         res = requests.get(url, headers=headers)
         soup = BeautifulSoup(res.text, "html.parser")
@@ -24,11 +27,25 @@ def get_bank_news():
 
         for item in items:
             title = item.get_text(strip=True)
-            link = urljoin("https://finance.naver.com", item["href"])
-            news_data.append({"title": title, "link": link})
+            href = item["href"]
+
+            parsed = urlparse(href)
+            qs = parse_qs(parsed.query)
+
+            office_id = qs.get("office_id", [""])[0]
+            article_id = qs.get("article_id", [""])[0]
+
+            if office_id and article_id:
+                link = (
+                    "https://news.naver.com/main/read.naver"
+                    f"?officeId={office_id}&articleId={article_id}"
+                )
+                news_data.append({"title": title, "link": link})
 
         return news_data
-    except:
+
+    except Exception as e:
+        print("뉴스 수집 에러:", e)
         return []
 
 
@@ -44,7 +61,15 @@ def get_ai_summary(news_list):
 
 이 뉴스들을 바탕으로,
 - 오늘 금융 시장의 핵심 이슈를 2~3줄로 요약하고
-- 투자자 관점에서 주목할 만한 흐름을 정리해 주세요.
+- 추가로 밑에 규칙으로 투자자 관점에서 주목할 만한 흐름을 정리해 주세요.
+
+투자자 주목 흐름 정리시에는 작성 규칙:
+- 반드시 아래 형식으로 작성
+1. 첫 번째 핵심 이슈 요약
+2. 두 번째 핵심 이슈 요약
+3. 세 번째 핵심 이슈 요약
+- 각 항목은 한 문장으로 간결하게
+- 불필요한 설명 없이 핵심만
 
 헤드라인:
 {titles}
