@@ -3,6 +3,9 @@ import requests
 from bs4 import BeautifulSoup
 from openai import OpenAI
 from datetime import datetime
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # OpenAI 설정
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
@@ -54,12 +57,15 @@ def update_readme():
 ```text
 {ai_briefing}
 
+## 📰 실시간 주요 헤드라인
+| 번호 | 뉴스 제목 (클릭 시 이동) |
+| :--- | :--- |
 """
-
+    
     for i, news in enumerate(news_list, 1):
         readme_content += f"| {i} | [{news['title']}]({news['link']}) |\n"
 
-        readme_content += f"\n---\n© {datetime.now().year} Finance Automation Project."
+        readme_content += f"\n---\n© {datetime.now().year}"
 
 
     with open("README.md", "w", encoding="utf-8") as file:
