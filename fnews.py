@@ -35,10 +35,17 @@ def get_ai_summary(news_list):
     )
     return response.choices[0].message.content
 
+def make_headline_table(news_list):
+    lines = []
+    for i, news in enumerate(news_list, 1):
+        lines.append(f"| {i} | [{news['title']}]({news['link']}) |")
+    return "\n".join(lines)
+
 def update_readme():
     # [중요] 여기서 news_list를 먼저 만들어야 아래에서 쓸 수 있습니다!
     news_list = get_bank_news()
     ai_briefing = get_ai_summary(news_list)
+    headline_table = make_headline_table(news_list)
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
 
     badge_py = "![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)"
@@ -59,13 +66,11 @@ def update_readme():
 
 ## 📰 실시간 주요 헤드라인
 | 번호 | 뉴스 제목 (클릭 시 이동) |
-| :--- | :--- |
-"""
-    
-    for i, news in enumerate(news_list, 1):
-        readme_content += f"| {i} | [{news['title']}]({news['link']}) |\n"
+{headline_table}
 
-        readme_content += f"\n---\n© {datetime.now().year}"
+© {datetime.now().year}
+"""
+
 
 
     with open("README.md", "w", encoding="utf-8") as file:
