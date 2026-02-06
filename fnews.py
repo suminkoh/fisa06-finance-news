@@ -73,7 +73,7 @@ def update_readme():
 ## 🕒 Last Update: `{now}` (KST)
 
 ## 🤖 AI 애널리스트 오늘의 브리핑
-```text
+
 {ai_briefing}
 
 ## 📰 실시간 주요 헤드라인
