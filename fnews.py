@@ -10,21 +10,27 @@ load_dotenv()
 # OpenAI 설정
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
+from urllib.parse import urljoin
+
 def get_bank_news():
     url = "https://finance.naver.com/news/news_list.naver?mode=LSS2D&section_id=101&section_id2=259"
-    headers = {'User-Agent': 'Mozilla/5.0'}
+    headers = {"User-Agent": "Mozilla/5.0"}
     try:
         res = requests.get(url, headers=headers)
-        soup = BeautifulSoup(res.text, 'html.parser')
+        soup = BeautifulSoup(res.text, "html.parser")
+
         news_data = []
-        items = soup.select('.articleSubject a')[:10] 
+        items = soup.select(".articleSubject a")[:10]
+
         for item in items:
             title = item.get_text(strip=True)
-            link = "https://finance.naver.com" + item['href']
+            link = urljoin("https://finance.naver.com", item["href"])
             news_data.append({"title": title, "link": link})
+
         return news_data
     except:
         return []
+
 
 def get_ai_summary(news_list):
     if not news_list: return "뉴스를 가져오지 못했습니다."
