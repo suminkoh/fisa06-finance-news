@@ -54,14 +54,20 @@ ai_analysis = analyze_news_with_gpt(news_titles)
 now = datetime.now().strftime('%Y-%m-%d %H:%M')
 
 # 2. README.md 파일 작성
-print("README.md 업데이트 중...")
-with open("README.md", "w", encoding="utf-8") as f:
-    f.write(f"# 🏦 Daily Bank & Finance Report\n\n")
-    f.write(f"### 🕒 업데이트 시간: {now}\n\n")
-    f.write(f"## 🤖 AI 애널리스트 브리핑\n\n{ai_analysis}\n\n")
-    f.write(f"---\n")
-    f.write(f"### 📰 수집된 실시간 뉴스 헤드라인\n")
-    for title in news_titles:
-        f.write(f"- {title}\n")
+now = datetime.now().strftime('%Y-%m-%d %H:%M')
 
-print("모든 작업이 완료되었습니다!")
+with open("README.md", "w", encoding="utf-8") as f:
+    f.write("# 🏦 Bank News AI Analyzer\n\n")
+    
+    # 배지 (따옴표 에러 방지를 위해 변수로 따로 뺌)
+    badge_py = "![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)"
+    badge_ai = "![OpenAI](https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white)"
+    badge_gh = "![Github Actions](https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white)"
+    
+    f.write(f"{badge_py} {badge_ai} {badge_gh}\n\n")
+    f.write(f"> **💡 공지:** 본 리포트는 매일 AI가 최신 금융 뉴스를 요약하여 업데이트합니다.\n\n")
+    f.write(f"## 🕒 업데이트 시간: `{now}`\n\n")
+    f.write(f"## 🤖 AI 애널리스트 브리핑\n\n{ai_analysis}\n\n")
+    f.write(f"## 📰 주요 뉴스 헤드라인\n")
+    for i, title in enumerate(news_titles, 1):
+        f.write(f"{i}. {title}\n")
