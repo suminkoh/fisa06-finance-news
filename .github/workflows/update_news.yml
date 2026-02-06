@@ -29,6 +29,7 @@ jobs:
       - name: Run fnews.py # 실행 파일명을 fnews.py로 변경
         run: |
           python fnews.py
+          ls -al
         env:
           # Settings > Secrets > Actions에 저장한 이름을 여기에 적습니다.
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
