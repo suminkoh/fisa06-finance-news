@@ -31,7 +31,19 @@ def get_ai_summary(news_list):
     titles = [n['title'] for n in news_list]
     response = client.chat.completions.create(
         model="gpt-4o-mini",
-        messages=[{"role": "user", "content": f"금융 뉴스 요약해줘:\n{titles}"}]
+        messages=[{
+    "role": "user",
+    "content": f"""
+다음은 오늘의 주요 금융 뉴스 헤드라인 목록입니다.
+
+이 뉴스들을 바탕으로,
+- 오늘 금융 시장의 핵심 이슈를 1~2줄로 요약하고
+- 투자자 관점에서 주목할 만한 흐름을 정리해 주세요.
+
+헤드라인:
+{titles}
+"""
+}]
     )
     return response.choices[0].message.content
 
@@ -66,9 +78,10 @@ def update_readme():
 
 ## 📰 실시간 주요 헤드라인
 | 번호 | 뉴스 제목 (클릭 시 이동) |
+| --- | --- |
 {headline_table}
 
-© {datetime.now().year}
+© {datetime.now()}
 """
 
 
