@@ -14,6 +14,8 @@ from urllib.parse import urljoin
 
 from urllib.parse import parse_qs, urlparse
 
+import urllib.parse
+
 def get_bank_news():
     url = "https://finance.naver.com/news/news_list.naver?mode=LSS2D&section_id=101&section_id2=259"
     headers = {"User-Agent": "Mozilla/5.0"}
@@ -27,20 +29,15 @@ def get_bank_news():
 
         for item in items:
             title = item.get_text(strip=True)
-            href = item["href"]
 
-            parsed = urlparse(href)
-            qs = parse_qs(parsed.query)
+            # 🔑 네이버 뉴스 검색 링크 (외부 접근 100% 가능)
+            query = urllib.parse.quote(title)
+            link = f"https://search.naver.com/search.naver?where=news&query={query}"
 
-            office_id = qs.get("office_id", [""])[0]
-            article_id = qs.get("article_id", [""])[0]
-
-            if office_id and article_id:
-                link = (
-                    "https://news.naver.com/main/read.naver"
-                    f"?officeId={office_id}&articleId={article_id}"
-                )
-                news_data.append({"title": title, "link": link})
+            news_data.append({
+                "title": title,
+                "link": link
+            })
 
         return news_data
 
@@ -70,6 +67,7 @@ def get_ai_summary(news_list):
 3. 세 번째 핵심 이슈 요약
 - 각 항목은 한 문장으로 간결하게
 - 불필요한 설명 없이 핵심만
+- 문장마다 소제목+한 문장 정리 형식으로 번호 매겨서
 
 헤드라인:
 {titles}
