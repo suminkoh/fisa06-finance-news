@@ -44,7 +44,6 @@ def update_readme():
 
     
     readme_content = f"""# 🏦 Bank News AI Analyzer
-
 {badge_py} {badge_ai} {badge_gh}
 
 > **💡 공지:** 본 리포트는 매일 아침 AI가 최신 금융 뉴스를 요약하여 업데이트합니다.
