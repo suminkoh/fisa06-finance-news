@@ -3,8 +3,8 @@ name: Bank News AI Analysis Pipeline
 on:
   schedule:
     # 한국 시간 기준 매일 오전 8시 (UTC 23:00)
-    - cron: '*/5 * * * *'
-  workflow_dispatch: # 깃허브 웹에서 수동 실행 버튼 활성화
+    - cron: '0 23 * * *'
+  workflow_dispatch: # 수동 실행 버튼 생성
 
 jobs:
   build:
@@ -12,28 +12,32 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4 # 최신 버전 v4 사용
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4 # v4가 더 안정적입니다
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install dependencies
         run: |
-          pip install requests beautifulsoup4 openai
+          python -m pip install --upgrade pip
+          # 우리 프로젝트에 필요한 라이브러리들 설치
+          pip install requests beautifulsoup4 openai 
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      - name: Run Crawler & AI Analysis
+      - name: Run fnews.py # 실행 파일명을 fnews.py로 변경
+        run: |
+          python fnews.py
         env:
-          # Settings > Secrets에 저장한 키를 불러옵니다.
+          # Settings > Secrets > Actions에 저장한 이름을 여기에 적습니다.
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: python crawling.py
 
       - name: Commit and Push changes
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add README.md
-          # 변경사항이 없을 경우 에러 방지를 위해 || echo 처리
-          git commit -m "Update: Daily Bank News Report by AI" || echo "No changes to commit"
+          # 변경사항이 있을 때만 커밋 (없으면 통과)
+          git commit -m "🚀 Update: Daily Bank News Report" || echo "No changes to commit"
           git push
